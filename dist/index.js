@@ -28891,6 +28891,9 @@ const AWS_KEY_ID = core.getInput('aws_key_id', {
 const SECRET_ACCESS_KEY = core.getInput('aws_secret_access_key', {
   required: true,
 });
+const AWS_REGION = core.getInput('region', {
+  required: true,
+});
 const BUCKET = core.getInput('aws_bucket', {
   required: true,
 });
@@ -28913,7 +28916,13 @@ if (ENDPOINT) {
   s3options.endpoint = ENDPOINT;
 }
 
-const s3 = new S3(s3options);
+const s3 = new S3({
+  apiVersion: '2006-03-01',
+  signatureVersion: 'v4',
+  region: AWS_REGION,
+  credentials: s3options,
+});
+
 const destinationDir = DESTINATION_DIR === '/' ? shortid() : DESTINATION_DIR;
 const paths = klawSync(SOURCE_DIR, {
   nodir: true,
